@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Online Store</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+.cart-btn{
+  margin-top:10px;
+  padding:10px;
+  width:100%;
+  border:none;
+  border-radius:8px;
+  background:linear-gradient(90deg,#00f2fe,#43e97b);
+  font-weight:600;
+  cursor:pointer;
+  transition:0.3s;
+}
+.cart-btn:hover{
+  transform:scale(1.05);
+}
+
+.cart-box{
+  position:fixed;
+  right:-100%;
+  top:0;
+  width:300px;
+  height:100vh;
+  background:#0f1528;
+  padding:20px;
+  transition:0.4s;
+  z-index:200;
+}
+.cart-box.active{
+  right:0;
+}
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:'Poppins',sans-serif;
+    }
+
+    body{
+      background:#0b0f1a;
+      color:#fff;
+    }
+
+    /* HEADER */
+    header{
+      padding:15px 8%;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      background:rgba(0,0,0,0.6);
+      position:sticky;
+      top:0;
+      z-index:100;
+    }
+
+    header h2{
+      background:linear-gradient(90deg,#00f2fe,#43e97b);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      font-weight:700;
+    }
+
+    nav a{
+      margin-left:20px;
+      color:#cfd9ff;
+      text-decoration:none;
+    }
+
+    /* HERO */
+    .hero{
+      padding:80px 8%;
+      text-align:center;
+      background:linear-gradient(135deg,#020024,#090979,#000000);
+    }
+
+    .hero h1{
+      font-size:3rem;
+      background:linear-gradient(90deg,#00f2fe,#4facfe,#43e97b);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+
+    .hero p{
+      margin-top:15px;
+      color:#dbe3ff;
+    }
+
+    /* PRODUCT FORM */
+    .admin{
+      padding:60px 8%;
+      background:#0f1528;
+    }
+
+    .admin h2{
+      margin-bottom:20px;
+    }
+
+    .admin input,
+    .admin textarea,
+    .admin button{
+      width:100%;
+      padding:12px;
+      margin-bottom:15px;
+      border-radius:8px;
+      border:none;
+      outline:none;
+    }
+
+    .admin button{
+      background:linear-gradient(90deg,#00f2fe,#4facfe);
+      font-weight:600;
+      cursor:pointer;
+    }
+
+    /* PRODUCTS */
+    .products{
+      padding:80px 8%;
+    }
+
+    .product-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+      gap:25px;
+    }
+
+    .product{
+      background:rgba(255,255,255,0.08);
+      padding:20px;
+      border-radius:15px;
+      transition:0.3s;
+    }
+
+    .product:hover{
+      transform:translateY(-10px);
+      box-shadow:0 0 30px rgba(0,242,254,0.4);
+    }
+
+    .product img{
+      width:100%;
+      height:180px;
+      object-fit:cover;
+      border-radius:10px;
+    }
+
+    .product h3{
+      margin:10px 0;
+    }
+
+    .product span{
+      color:#43e97b;
+      font-weight:600;
+    }
+
+    /* FOOTER */
+    footer{
+      text-align:center;
+      padding:25px;
+      background:rgba(0,0,0,0.6);
+    }
+
+    @media(max-width:600px){
+      .hero h1{font-size:2.2rem;}
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h2>MyStore</h2>
+  <nav>
+  <a href="#">Home</a>
+  <a href="#products">Products</a>
+  <a href="#" onclick="openCart()">Cart 🛒 <span id="cartCount">0</span></a>
+</nav>
+
+</header>
+
+<section class="hero">
+  <h1>Start Your Online Store</h1>
+  <p>Add products and showcase them like a Shopify store</p>
+</section>
+
+<section class="admin">
+  <h2>Add Product (Admin Panel)</h2>
+  <input type="text" id="name" placeholder="Product Name">
+  <input type="number" id="price" placeholder="Price">
+  <input type="text" id="image" placeholder="Image URL">
+  <textarea id="desc" placeholder="Product Description"></textarea>
+  <button onclick="addProduct()">Add Product</button>
+</section>
+
+<section id="products" class="products">
+  <h2>Products</h2>
+  <div class="product-grid" id="productGrid"></div>
+</section>
+
+<footer>
+  <p>© 2026 MyStore</p>
+</footer>
+<div id="cartBox" class="cart-box">
+  <h3>Your Cart</h3>
+  <div id="cartItems"></div>
+  <button onclick="closeCart()">Close</button>
+</div>
+
+<script>
+let cart = [];
+function addToCart(name, price){
+  cart.push({name, price});
+  updateCartCount();
+}
+
+function updateCartCount(){
+  document.getElementById("cartCount").innerText = cart.length;
+}
+
+function openCart(){
+  const box = document.getElementById("cartBox");
+  const items = document.getElementById("cartItems");
+  items.innerHTML = "";
+  cart.forEach(p=>{
+    items.innerHTML += `<p>${p.name} - ₹${p.price}</p>`;
+  });
+  box.classList.add("active");
+}
+
+function closeCart(){
+  document.getElementById("cartBox").classList.remove("active");
+}
+
+  const productGrid = document.getElementById('productGrid');
+
+  function addProduct(){
+    const name = document.getElementById('name').value;
+    const price = document.getElementById('price').value;
+    const image = document.getElementById('image').value;
+    const desc = document.getElementById('desc').value;
+
+    if(!name || !price || !image){
+      alert('Please fill all required fields');
+      return;
+    }
+
+    const product = document.createElement('div');
+    product.classList.add('product');
+
+    product.innerHTML = `
+  <img src="${image}" alt="product">
+  <h3>${name}</h3>
+  <p>${desc}</p>
+  <span>₹ ${price}</span>
+  <button class="cart-btn" onclick="addToCart('${name}', ${price})">
+    Add to Cart
+  </button>
+`;
+
+    productGrid.appendChild(product);
+
+    document.getElementById('name').value='';
+    document.getElementById('price').value='';
+    document.getElementById('image').value='';
+    document.getElementById('desc').value='';
+
+  }
+</script>
+
+</body>
+</html>
